@@ -41,6 +41,7 @@ const Home = () => {
         black="black"
         p={3}
         borderRadius={"lg"}
+        mb="20px"
       >
         <Tabs variant="soft-rounded">
           <TabList mb="1em">

@@ -4,9 +4,12 @@
 }
 .app{
     min-height: 100vh;
+    min-width:95vw;
+    overflow:auto;
     display: flex;
     background-image:url("./background.jpg");
     background-size: cover;
-    background-position: center;
+    background-repeat: no-repeat;
+    background-position: center center;
     color:black;
 }
