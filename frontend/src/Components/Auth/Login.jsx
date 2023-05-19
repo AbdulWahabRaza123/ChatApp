@@ -1,8 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Container,
-  Box,
-  Text,
   InputGroup,
   VStack,
   FormControl,
@@ -10,19 +8,71 @@ import {
   Input,
   InputRightElement,
   Button,
+  useToast,
 } from "@chakra-ui/react";
+import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
 const Login = () => {
+  const history = useNavigate();
+  const toast = useToast();
   const [show, setShow] = useState(false);
-  const [onHoverBlue, setOnHoverBlue] = useState(false);
-  const [onHoverRed, setOnHoverRed] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const submitDetails = () => {
-    console.log("This is login...");
+  const submitDetails = async (e) => {
+    try {
+      e.preventDefault();
+      setLoading(true);
+      if (email && password) {
+        const res = await fetch("/api/user/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password,
+          }),
+        });
+        console.log("This is response ", res.status);
+        if (res.status === 201) {
+          const data = await res.json();
+          localStorage.setItem("userInfo", data);
+          setLoading(false);
+          history("/chat");
+        } else {
+          setLoading(false);
+          toast({
+            title: "Error",
+            description: "Wronge Credientials!",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+            position: "bottom",
+          });
+        }
+      } else {
+        setLoading(false);
+        toast({
+          title: "Error",
+          description: "Password not matching!",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
+      }
+    } catch (e) {
+      setLoading(false);
+      console.log(e);
+    }
+  };
+  const LoginGuest = () => {
+    history("/chat");
   };
   return (
     <>
-      <Container m="20px">
+      <Container>
         <VStack marginTop="2rem" spacing={4} align="stretch" color={"black"}>
           <FormControl id="email" isRequired>
             <FormLabel>Email:</FormLabel>
@@ -73,41 +123,33 @@ const Login = () => {
         <VStack marginTop="2.3rem" spacing={4} align="stretch" color={"black"}>
           <Button
             color="white"
-            bg={onHoverBlue ? "#89CFF0" : "#00bfff"}
+            _hover={{ bg: "#89CFF0" }}
+            bg="#00bfff"
+            isLoading={loading}
+            loadingText="loading..."
             borderRadius={"15px"}
-            onPointerEnter={() => {
-              setOnHoverBlue(true);
-            }}
-            onPointerLeave={() => {
-              setOnHoverBlue(false);
-            }}
             fontWeight={600}
             fontSize={"15px"}
             padding="10px"
             width="100%"
-            onClick={() => {
-              submitDetails();
+            onClick={(e) => {
+              submitDetails(e);
             }}
           >
             Login
           </Button>
           <Button
             color="white"
-            bg={onHoverRed ? "#ff726f" : "red"}
+            _hover={{ bg: "#ff726f" }}
+            bg="red"
             borderRadius={"15px"}
-            onPointerEnter={() => {
-              setOnHoverRed(true);
-            }}
-            onPointerLeave={() => {
-              setOnHoverRed(false);
-            }}
             fontWeight={600}
             fontSize={"15px"}
             padding="10px"
             width="100%"
             marginTop="15px"
             onClick={() => {
-              submitDetails();
+              LoginGuest();
             }}
           >
             Get Guest User Credientials
@@ -117,5 +159,7 @@ const Login = () => {
     </>
   );
 };
-
+Login.propTypes = {
+  props: PropTypes.any,
+};
 export default Login;

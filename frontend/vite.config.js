@@ -5,11 +5,15 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   server: {
+    hmr: {
+      // Disable ESLint during development
+      overlay: false,
+    },
     proxy: {
       "/api": {
         target: "http://localhost:8000",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ""),
+        // rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
   },

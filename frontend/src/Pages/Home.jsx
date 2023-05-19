@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Container,
   Box,
@@ -18,26 +18,26 @@ const Home = () => {
     query: "(max-width: 700px)",
   });
   return (
-    <Container d="flex" width="100%" centerContent>
+    <Container maxW={"xl"} centerContent>
       <Box
         d="flex"
         justifyContent="center"
         textAlign={"center"}
         p={3}
         bg={"white"}
-        w={isResponsive ? "80%" : "40%"}
+        w={isResponsive ? "100%" : "100%"}
         height="auto"
         m="40px 0 15px 0"
         borderRadius={"lg"}
         borderWidth={"1px"}
       >
-        <Text fontSize={"4xl"} color={"black"}>
+        <Text fontSize={"4xl"} fontFamily={"Work sans"} color={"black"}>
           Talk-A-Tive
         </Text>
       </Box>
       <Box
         bg="white"
-        w={isResponsive ? "80%" : "40%"}
+        w={isResponsive ? "100%" : "100%"}
         black="black"
         p={3}
         borderRadius={"lg"}
@@ -47,7 +47,8 @@ const Home = () => {
           <TabList mb="1em">
             <Tab
               width="50%"
-              bg={"#00bfff"}
+              _selected={{ background: "#00bfff" }}
+              bg={"#89CFF0"}
               paddingLeft={"10px"}
               paddingRight={"10px"}
               paddingTop="5px"
@@ -55,7 +56,7 @@ const Home = () => {
               borderRadius={"15px"}
               fontSize={"15px"}
               fontWeight={tabNo === 0 ? 600 : 500}
-              color={"white"}
+              color={"black"}
               onClick={() => {
                 setTabNo(0);
               }}
@@ -64,7 +65,9 @@ const Home = () => {
             </Tab>
             <Tab
               width="50%"
-              bg={"#00bfff"}
+              _selected={{ background: "#00bfff" }}
+              bg={"#89CFF0"}
+              // bg={"#00bfff"}
               paddingLeft={"10px"}
               paddingRight={"10px"}
               paddingTop="5px"
@@ -73,7 +76,7 @@ const Home = () => {
               marginLeft="10px"
               fontSize={"15px"}
               fontWeight={tabNo === 1 ? 600 : 500}
-              color={"white"}
+              color={"black"}
               onClick={() => {
                 setTabNo(1);
               }}
@@ -83,10 +86,10 @@ const Home = () => {
           </TabList>
           <TabPanels>
             <TabPanel>
-              <Login />
+              <Login setTabNo={setTabNo} />
             </TabPanel>
             <TabPanel>
-              <Signup />
+              <Signup setTabNo={setTabNo} />
             </TabPanel>
           </TabPanels>
         </Tabs>

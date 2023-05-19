@@ -2,17 +2,19 @@ const dotenv = require("dotenv");
 dotenv.config();
 const express = require("express");
 const connectDB = require("./Config/db");
+const cors = require("cors");
 connectDB();
 const chats = require("./data");
 const userRoutes = require("./Routes/userRoutes");
 const { errorHandler, notFound } = require("./middleware/errorMiddleware");
 const app = express();
 app.use(express.json()); //to accept json data
+app.use(cors());
 app.use("/api/user", userRoutes);
 //if path not found then
 app.use(notFound);
 app.use(errorHandler);
-// app.get("/", (req, res) => {
+// app.get("/api/hello", (req, res) => {
 //   res.send("listening to API");
 // });
 // app.get("/chats", (req, res) => {
