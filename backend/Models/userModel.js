@@ -13,6 +13,10 @@ const userSchema = mongoose.Schema(
     },
     password: {
       type: String,
+      require: true,
+    },
+    pic: {
+      type: String,
       default:
         "https://thumbs.dreamstime.com/b/default-avatar-profile-image-vector-social-media-user-icon-potrait-182347582.jpg",
     },

@@ -56,7 +56,7 @@ const Home = () => {
               borderRadius={"15px"}
               fontSize={"15px"}
               fontWeight={tabNo === 0 ? 600 : 500}
-              color={"black"}
+              color={"white"}
               onClick={() => {
                 setTabNo(0);
               }}
@@ -67,7 +67,6 @@ const Home = () => {
               width="50%"
               _selected={{ background: "#00bfff" }}
               bg={"#89CFF0"}
-              // bg={"#00bfff"}
               paddingLeft={"10px"}
               paddingRight={"10px"}
               paddingTop="5px"
@@ -76,7 +75,7 @@ const Home = () => {
               marginLeft="10px"
               fontSize={"15px"}
               fontWeight={tabNo === 1 ? 600 : 500}
-              color={"black"}
+              color={"white"}
               onClick={() => {
                 setTabNo(1);
               }}

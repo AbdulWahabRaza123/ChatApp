@@ -105,12 +105,22 @@ const Signup = () => {
               pic: image,
             }),
           });
-          console.log("This is response ", res);
-          const data = await res.json();
-
-          localStorage.setItem("userInfo", data);
-          setLoading(false);
-          history("/chat");
+          if (res.status === 201) {
+            const data = await res.json();
+            localStorage.setItem("userInfo", data);
+            setLoading(false);
+            history("/chat");
+          } else {
+            setLoading(false);
+            toast({
+              title: "Error!",
+              description: "Enter another mail!",
+              status: "error",
+              duration: 5000,
+              isClosable: true,
+              position: "bottom",
+            });
+          }
         } else {
           setLoading(false);
           toast({
@@ -140,7 +150,7 @@ const Signup = () => {
   };
   return (
     <>
-      <Container m={"20px"}>
+      <Container>
         <VStack marginTop="2rem" spacing={4} align="stretch" color={"black"}>
           <FormControl id="fName" isRequired>
             <FormLabel>Name:</FormLabel>
@@ -192,7 +202,9 @@ const Signup = () => {
               />
               <InputRightElement width="4.5rem" justifyContent={"center"}>
                 <Button
-                  h="2.75rem"
+                  mt="10px"
+                  bg="transparent"
+                  h="1.75rem"
                   size="sm"
                   onClick={() => {
                     setShow(!show);

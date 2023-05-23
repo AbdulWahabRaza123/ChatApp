@@ -6,11 +6,13 @@ const cors = require("cors");
 connectDB();
 const chats = require("./data");
 const userRoutes = require("./Routes/userRoutes");
+const chatRoutes = require("./Routes/chatRoutes");
 const { errorHandler, notFound } = require("./middleware/errorMiddleware");
 const app = express();
 app.use(express.json()); //to accept json data
 app.use(cors());
 app.use("/api/user", userRoutes);
+app.use("/api/chat", chatRoutes);
 //if path not found then
 app.use(notFound);
 app.use(errorHandler);

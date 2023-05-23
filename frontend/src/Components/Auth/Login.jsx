@@ -106,9 +106,15 @@ const Login = () => {
                   setPassword(e.target.value);
                 }}
               />
-              <InputRightElement width="4.5rem" justifyContent={"center"}>
+              <InputRightElement
+                width="4.5rem"
+                alignItems={"center"}
+                justifyContent={"center"}
+              >
                 <Button
-                  h="2.75rem"
+                  mt="10px"
+                  bg="transparent"
+                  h="1.75rem"
                   size="sm"
                   onClick={() => {
                     setShow(!show);
