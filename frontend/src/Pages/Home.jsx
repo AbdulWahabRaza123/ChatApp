@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Container,
   Box,
@@ -9,14 +9,22 @@ import {
   Tab,
   TabPanel,
 } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
 import Login from "../Components/Auth/Login";
 import Signup from "../Components/Auth/Signup";
 const Home = () => {
+  const history = useNavigate();
   const [tabNo, setTabNo] = useState(0);
   const isResponsive = useMediaQuery({
     query: "(max-width: 700px)",
   });
+  useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem("userInfo"));
+    if (userData) {
+      history("/Chat");
+    }
+  }, [history]);
   return (
     <Container maxW={"xl"} centerContent>
       <Box

@@ -1,32 +1,32 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+// import { useState, useEffect } from "react";
+import { ChatState } from "../Components/Context/ChatProvider";
+import { Box } from "@chakra-ui/react";
+import ChatBox from "../Components/ChatBox";
+import MyChats from "../Components/MyChats";
+import SideDrawer from "../Components/miscellaneous/SideDrawer";
+// import axios from "axios";
+import PropTypes from "prop-types";
 const Chat = () => {
-  const [chats, setChats] = useState([]);
-  const [mount, setMount] = useState(false);
-  const GetChats = async () => {
-    const res = await axios.get("/api/chats");
-    setChats(res.data);
-  };
-  useEffect(() => {
-    GetChats();
-    setMount(true);
-  }, []);
+  const { user } = ChatState();
   return (
-    mount && (
-      <>
-        <div>
-          <h1>Hello World</h1>
-          {chats?.map((val, index) => {
-            return (
-              <>
-                <p key={index}>{val.chatName}</p>
-              </>
-            );
-          })}
-        </div>
-      </>
-    )
+    <>
+      <div style={{ width: "100%" }}>
+        {user && <SideDrawer />}
+        <Box
+          display={"flex"}
+          justifyContent={"space-between"}
+          width="100%"
+          height="92%"
+          p="10px"
+        >
+          {user && <MyChats />}
+          {user && <ChatBox />}
+        </Box>
+      </div>
+    </>
   );
 };
-
+Chat.propTypes = {
+  props: PropTypes.any,
+};
 export default Chat;

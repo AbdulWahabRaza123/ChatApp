@@ -37,7 +37,7 @@ const Login = () => {
         console.log("This is response ", res.status);
         if (res.status === 201) {
           const data = await res.json();
-          localStorage.setItem("userInfo", data);
+          localStorage.setItem("userInfo", JSON.stringify(data));
           setLoading(false);
           history("/chat");
         } else {
