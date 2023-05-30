@@ -42,7 +42,6 @@ const accessChat = asyncHandler(async (req, res) => {
 });
 const fetchChats = asyncHandler(async (req, res) => {
   try {
-    console.log("This is chats fetching...");
     Chat.find({ users: { $elemMatch: { $eq: req.user._id } } })
       .populate("users", "-password")
       .populate("groupAdmin", "-password")

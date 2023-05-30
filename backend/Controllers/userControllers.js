@@ -73,11 +73,7 @@ const allUsers = asyncHandler(async (req, res) => {
   // to get some other queries use & like below
   // /api/user?search=abdul wahab&lastname=raza
   // hum yehaan apne apko search nahi kr skte
-  console.log("This is learning ", () => {
-    return {
-      name: { $regex: req.query.search, $options: "i" },
-    };
-  });
+
   const keyword = req.query.search
     ? {
         $or: [

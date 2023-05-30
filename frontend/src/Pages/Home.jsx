@@ -20,7 +20,8 @@ const Home = () => {
     query: "(max-width: 700px)",
   });
   useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem("userInfo"));
+    const userInfo = localStorage.getItem("userInfo");
+    const userData = JSON.parse(userInfo);
     if (userData) {
       history("/Chat");
     }
