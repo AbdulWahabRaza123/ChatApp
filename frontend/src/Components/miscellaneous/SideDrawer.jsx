@@ -151,43 +151,45 @@ const SideDrawer = () => {
           </Menu>
         </div>
       </Box>
-      <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
-        <DrawerOverlay />
-        <DrawerContent>
-          <DrawerHeader borderBottomWidth="1px">Search Users</DrawerHeader>
-          <DrawerBody>
-            <Box display="flex" paddingBottom="2px">
-              <Input
-                placeholder="Search by name or email"
-                mr={2}
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                }}
-              />
-              <Button onClick={handleSearch}>Go</Button>
-            </Box>
-            {loading ? (
-              <ChatLoading />
-            ) : (
-              <>
-                <div>
-                  {searchResult.map((user) => {
-                    return (
-                      <UserListItem
-                        key={user._id}
-                        user={user}
-                        handleFunction={() => accessChat(user._id)}
-                      />
-                    );
-                  })}
-                </div>
-              </>
-            )}
-            {loadingChat && <Spinner ml="auto" display="flex" />}
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
+      {isOpen && (
+        <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
+          <DrawerOverlay />
+          <DrawerContent>
+            <DrawerHeader borderBottomWidth="1px">Search Users</DrawerHeader>
+            <DrawerBody>
+              <Box display="flex" paddingBottom="2px">
+                <Input
+                  placeholder="Search by name or email"
+                  mr={2}
+                  value={search}
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                  }}
+                />
+                <Button onClick={handleSearch}>Go</Button>
+              </Box>
+              {loading ? (
+                <ChatLoading />
+              ) : (
+                <>
+                  <div>
+                    {searchResult.map((user) => {
+                      return (
+                        <UserListItem
+                          key={user._id}
+                          user={user}
+                          handleFunction={() => accessChat(user._id)}
+                        />
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+              {loadingChat && <Spinner ml="auto" display="flex" />}
+            </DrawerBody>
+          </DrawerContent>
+        </Drawer>
+      )}
     </>
   );
 };

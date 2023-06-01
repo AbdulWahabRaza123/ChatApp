@@ -186,96 +186,97 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain }) => {
         icon={<ViewIcon />}
         onClick={onOpen}
       />
-
-      <Modal isOpen={isOpen} onClose={onClose} isCentered>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader
-            fontSize="35px"
-            fontFamily={"Work sans"}
-            display="flex"
-            justifyContent={"center"}
-          >
-            {selectedChat.chatName}
-          </ModalHeader>
-          <ModalCloseButton onClick={onClose} />
-          <ModalBody>
-            <Box width="100%" display="flex" flexWrap="wrap" pb={3}>
-              {selectedChat.users.map((u) => {
-                return (
-                  <>
-                    <UserBadgeItem
-                      key={user._id}
-                      user={u}
-                      handleFunction={() => handleRemove(u)}
-                    />
-                  </>
-                );
-              })}
-            </Box>
-            <FormControl display="flex">
-              <Input
-                placeholder="Chat Name"
-                mb={3}
-                value={groupChatName}
-                onChange={(e) => setGroupChatName(e.target.value)}
-              />
-              <Button
-                variant={"solid"}
-                colorScheme="teal"
-                ml={1}
-                isLoading={renameLoading}
-                onClick={handleRename}
-              >
-                Update
-              </Button>
-            </FormControl>
-            <FormControl>
-              <Input
-                placeholder="Add User to group"
-                mb={3}
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  handleSearch(e.target.value);
-                }}
-              />
-            </FormControl>
-            {loading ? (
-              <>
-                <Spinner size="lg" />
-              </>
-            ) : (
-              <>
-                {searchResult?.map((user) => {
+      {isOpen && (
+        <Modal isOpen={isOpen} onClose={onClose} isCentered>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader
+              fontSize="35px"
+              fontFamily={"Work sans"}
+              display="flex"
+              justifyContent={"center"}
+            >
+              {selectedChat.chatName}
+            </ModalHeader>
+            <ModalCloseButton onClick={onClose} />
+            <ModalBody>
+              <Box width="100%" display="flex" flexWrap="wrap" pb={3}>
+                {selectedChat.users.map((u) => {
                   return (
                     <>
-                      <UserListItem
+                      <UserBadgeItem
                         key={user._id}
-                        user={user}
-                        handleFunction={() => {
-                          handleAddedUser(user);
-                        }}
+                        user={u}
+                        handleFunction={() => handleRemove(u)}
                       />
                     </>
                   );
                 })}
-              </>
-            )}
-          </ModalBody>
+              </Box>
+              <FormControl display="flex">
+                <Input
+                  placeholder="Chat Name"
+                  mb={3}
+                  value={groupChatName}
+                  onChange={(e) => setGroupChatName(e.target.value)}
+                />
+                <Button
+                  variant={"solid"}
+                  colorScheme="teal"
+                  ml={1}
+                  isLoading={renameLoading}
+                  onClick={handleRename}
+                >
+                  Update
+                </Button>
+              </FormControl>
+              <FormControl>
+                <Input
+                  placeholder="Add User to group"
+                  mb={3}
+                  value={search}
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                    handleSearch(e.target.value);
+                  }}
+                />
+              </FormControl>
+              {loading ? (
+                <>
+                  <Spinner size="lg" />
+                </>
+              ) : (
+                <>
+                  {searchResult?.map((user) => {
+                    return (
+                      <>
+                        <UserListItem
+                          key={user._id}
+                          user={user}
+                          handleFunction={() => {
+                            handleAddedUser(user);
+                          }}
+                        />
+                      </>
+                    );
+                  })}
+                </>
+              )}
+            </ModalBody>
 
-          <ModalFooter>
-            <Button
-              colorScheme="red"
-              onClick={() => {
-                handleRemove(user);
-              }}
-            >
-              Leave Group
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+            <ModalFooter>
+              <Button
+                colorScheme="red"
+                onClick={() => {
+                  handleRemove(user);
+                }}
+              >
+                Leave Group
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      )}
     </>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   useDisclosure,
   Modal,
@@ -20,6 +20,7 @@ import UserListItem from "../UserAvatar/UserListItem";
 import UserBadgeItem from "../UserAvatar/UserBadgeItem";
 const GroupChatModal = ({ children }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [mount, setMount] = useState(false);
   const [groupChatName, setGroupChatName] = useState();
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [search, setSearch] = useState("");
@@ -115,88 +116,105 @@ const GroupChatModal = ({ children }) => {
   const handleDelete = (userItem) => {
     setSelectedUsers(selectedUsers.filter((sel) => sel._id !== userItem._id));
   };
+  useEffect(() => {
+    setMount(true);
+  }, []);
   return (
-    <>
-      <span onClick={onOpen}>{children}</span>
-
-      <Modal isOpen={isOpen}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader
-            fontSize="35px"
-            fontFamily="Work Sans"
-            display="flex"
-            justifyContent={"center"}
-          >
-            Create Group Chat
-          </ModalHeader>
-          <ModalCloseButton onClick={onClose} />
-          <ModalBody
-            display="flex"
-            flexDirection={"column"}
-            alignItems={"center"}
-          >
-            <FormControl>
-              <Input
-                placeholder="Chat Name"
-                mb={3}
-                onChange={(e) => {
-                  setGroupChatName(e.target.value);
-                }}
-              />
-              <Input
-                placeholder="Add Users e.g Raza, Abdullah"
-                mb={1}
-                onChange={(e) => {
-                  handleSearch(e.target.value);
-                }}
-              />
-              <Box width="100%" display="flex" flexWrap={"wrap"}>
-                {selectedUsers.map((user) => {
-                  return (
-                    <>
-                      <UserBadgeItem
-                        key={user._id}
-                        user={user}
-                        handleFunction={() => {
-                          handleDelete(user);
-                        }}
-                      />
-                    </>
-                  );
-                })}
-              </Box>
-              {/* show Searching Users  */}
-              {loading ? (
-                <>Loading...</>
-              ) : (
-                <>
-                  {searchResult?.slice(0, 4).map((user) => {
-                    return (
+    mount && (
+      <>
+        <span onClick={() => onOpen(true)}>{children}</span>
+        {isOpen && (
+          <>
+            <Modal
+              isOpen={isOpen}
+              onClose={() => {
+                onClose(false);
+              }}
+            >
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader
+                  fontSize="35px"
+                  fontFamily="Work Sans"
+                  display="flex"
+                  justifyContent={"center"}
+                >
+                  Create Group Chat
+                </ModalHeader>
+                <ModalCloseButton
+                  onClick={() => {
+                    onClose(false);
+                  }}
+                />
+                <ModalBody
+                  display="flex"
+                  flexDirection={"column"}
+                  alignItems={"center"}
+                >
+                  <FormControl>
+                    <Input
+                      placeholder="Chat Name"
+                      mb={3}
+                      onChange={(e) => {
+                        setGroupChatName(e.target.value);
+                      }}
+                    />
+                    <Input
+                      placeholder="Add Users e.g Raza, Abdullah"
+                      mb={1}
+                      onChange={(e) => {
+                        handleSearch(e.target.value);
+                      }}
+                    />
+                    <Box width="100%" display="flex" flexWrap={"wrap"}>
+                      {selectedUsers.map((user) => {
+                        return (
+                          <>
+                            <UserBadgeItem
+                              key={user._id}
+                              user={user}
+                              handleFunction={() => {
+                                handleDelete(user);
+                              }}
+                            />
+                          </>
+                        );
+                      })}
+                    </Box>
+                    {/* show Searching Users  */}
+                    {loading ? (
+                      <>Loading...</>
+                    ) : (
                       <>
-                        <UserListItem
-                          key={user._id}
-                          user={user}
-                          handleFunction={() => {
-                            handleGroup(user);
-                          }}
-                        />
+                        {searchResult?.slice(0, 4).map((user) => {
+                          return (
+                            <>
+                              <UserListItem
+                                key={user._id}
+                                user={user}
+                                handleFunction={() => {
+                                  handleGroup(user);
+                                }}
+                              />
+                            </>
+                          );
+                        })}
                       </>
-                    );
-                  })}
-                </>
-              )}
-            </FormControl>
-          </ModalBody>
+                    )}
+                  </FormControl>
+                </ModalBody>
 
-          <ModalFooter>
-            <Button colorScheme="blue" onClick={handleSubmit}>
-              Create Chat
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </>
+                <ModalFooter>
+                  <Button colorScheme="blue" onClick={handleSubmit}>
+                    Create Chat
+                  </Button>
+                </ModalFooter>
+              </ModalContent>
+            </Modal>
+          </>
+        )}
+      </>
+    )
   );
 };
 
