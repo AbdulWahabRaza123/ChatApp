@@ -10,6 +10,8 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { ArrowBackIcon } from "@chakra-ui/icons";
+import animationData from "../animations/typing";
+import Lottie from "react-lottie";
 import { getSender, getSenderFull } from "./config/ChatLogics";
 import ProfileModal from "./miscellaneous/ProfileModal";
 import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal";
@@ -19,8 +21,17 @@ import io from "socket.io-client";
 import "./styles.css";
 const ENDPOINT = "http://localhost:8000";
 var socket, selectedChatCompare;
+const defaultOptions = {
+  loop: true,
+  autoplay: true,
+  animationData: animationData,
+  renderSetting: {
+    preserveAspectRatio: "xMidYMid slice",
+  },
+};
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
-  const { user, selectedChat, setSelectedChat } = ChatState();
+  const { user, selectedChat, setSelectedChat, notification, setNotification } =
+    ChatState();
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [socketConnected, setSocketConnected] = useState(false);
@@ -28,6 +39,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [typing, setTyping] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const toast = useToast();
+
   useEffect(() => {
     socket = io(ENDPOINT);
     socket.emit("setup", user);
@@ -37,7 +49,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     socket.on("typing", () => {
       setIsTyping(true);
     });
-    socket.on("not typing", () => {
+    socket.on("stop typing", () => {
       setIsTyping(false);
     });
   }, []);
@@ -48,7 +60,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         selectedChatCompare._id !== newMessageRecieved.chat._id
       ) {
         console.log("This is notification...");
-        //give notification
+        if (!notification.includes(newMessageRecieved)) {
+          setNotification([newMessageRecieved, ...notification]);
+          setFetchAgain(!fetchAgain);
+        }
       } else {
         setMessages([...messages, newMessageRecieved]);
       }
@@ -208,7 +223,13 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             <FormControl onKeyDown={sendMessage} isRequired mt={3}>
               {isTyping ? (
                 <>
-                  <div>Loading...</div>
+                  <div>
+                    <Lottie
+                      options={defaultOptions}
+                      width={70}
+                      style={{ marginBottom: 15, marginLeft: 0 }}
+                    />
+                  </div>
                 </>
               ) : null}
               <Input
