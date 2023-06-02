@@ -25,16 +25,52 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [loading, setLoading] = useState(false);
   const [socketConnected, setSocketConnected] = useState(false);
   const [newMessage, setNewMessage] = useState();
+  const [typing, setTyping] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const toast = useToast();
   useEffect(() => {
     socket = io(ENDPOINT);
     socket.emit("setup", user);
-    socket.on("connection", () => {
+    socket.on("connected", () => {
       setSocketConnected(true);
     });
+    socket.on("typing", () => {
+      setIsTyping(true);
+    });
+    socket.on("not typing", () => {
+      setIsTyping(false);
+    });
   }, []);
+  useEffect(() => {
+    socket.on("message recieved", (newMessageRecieved) => {
+      if (
+        !selectedChatCompare ||
+        selectedChatCompare._id !== newMessageRecieved.chat._id
+      ) {
+        console.log("This is notification...");
+        //give notification
+      } else {
+        setMessages([...messages, newMessageRecieved]);
+      }
+    });
+  });
   const typeHandler = (e) => {
     setNewMessage(e.target.value);
+    if (!socketConnected) return;
+    if (!typing) {
+      setTyping(true);
+      socket.emit("typing", selectedChat._id);
+    }
+    let lastTypingTime = new Date().getTime();
+    var timerLength = 3000;
+    setTimeout(() => {
+      var timeNow = new Date().getTime();
+      var timeDiff = timeNow - lastTypingTime;
+      if (timeDiff >= timerLength && typing) {
+        socket.emit("stop typing", selectedChat._id);
+        setTyping(false);
+      }
+    }, timerLength);
   };
   const fetchMessages = async () => {
     if (!selectedChat) return;
@@ -68,12 +104,14 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const sendMessage = async (e) => {
     if (e.key === "Enter" && newMessage) {
       try {
+        socket.emit("stop typing", selectedChat._id);
         const config = {
           headers: {
             "Content-type": "application/json",
             Authorization: `Bearer ${user.token}`,
           },
         };
+
         const { data } = await axios.post(
           "/api/message",
           {
@@ -82,6 +120,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           },
           config
         );
+        socket.emit("new message", data);
+
         setNewMessage("");
         setMessages([...messages, data]);
       } catch (e) {
@@ -166,6 +206,11 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               </>
             )}
             <FormControl onKeyDown={sendMessage} isRequired mt={3}>
+              {isTyping ? (
+                <>
+                  <div>Loading...</div>
+                </>
+              ) : null}
               <Input
                 variant={"filled"}
                 bg="#E0E0E0"
