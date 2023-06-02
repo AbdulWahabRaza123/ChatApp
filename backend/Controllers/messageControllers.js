@@ -15,7 +15,6 @@ const sendMessage = asyncHandler(async (req, res) => {
   };
   try {
     var message = await Message.create(newMessage);
-    console.log("Before populating ", message);
     //fetch the name and pic of sender
     message = await message.populate("sender", "name pic");
     //fetch everything from chat
@@ -27,7 +26,6 @@ const sendMessage = asyncHandler(async (req, res) => {
     await Chat.findByIdAndUpdate(req.body.chatId, {
       latestMessage: message,
     });
-    console.log("After populating ", message);
     res.json(message);
   } catch (e) {
     res.status(400);
