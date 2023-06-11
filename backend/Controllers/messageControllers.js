@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const Message = require("../Models/messageModel");
 const User = require("../Models/userModel");
 const Chat = require("../Models/chatModel");
+const crypto = require("crypto");
 function encryptText(text) {
   let encryptedText = "";
   for (let i = 0; i < text.length; i++) {
@@ -22,6 +23,76 @@ function decryptText(encryptedText) {
   }
   return decryptedText;
 }
+function encryptAffine(text, a = 5, b = 8) {
+  const alphabet = "abcdefghijklmnopqrstuvwxyz";
+  const modulus = alphabet.length;
+  let encryptedText = "";
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i].toLowerCase();
+    const index = alphabet.indexOf(char);
+
+    if (index === -1) {
+      // If the character is not in the alphabet, keep it as is
+      encryptedText += char;
+    } else {
+      // Apply the Affine cipher encryption formula
+      const encryptedIndex = (a * index + b) % modulus;
+      const encryptedChar = alphabet[encryptedIndex];
+      encryptedText += encryptedChar;
+    }
+  }
+
+  return encryptedText;
+}
+// Function to decrypt a string using the Affine cipher
+function decryptAffine(encryptedText, a = 5, b = 8) {
+  const alphabet = "abcdefghijklmnopqrstuvwxyz";
+  const modulus = alphabet.length;
+  const inverseA = modInverse(a, modulus);
+  let decryptedText = "";
+
+  for (let i = 0; i < encryptedText.length; i++) {
+    const char = encryptedText[i].toLowerCase();
+    const index = alphabet.indexOf(char);
+
+    if (index === -1) {
+      // If the character is not in the alphabet, keep it as is
+      decryptedText += char;
+    } else {
+      // Apply the Affine cipher decryption formula
+      const decryptedIndex = (inverseA * (index - b + modulus)) % modulus;
+      const decryptedChar = alphabet[decryptedIndex];
+      decryptedText += decryptedChar;
+    }
+  }
+
+  return decryptedText;
+}
+// Helper function to calculate the modular multiplicative inverse
+function modInverse(a, m) {
+  let [x, y, gcd] = extendedEuclidean(a, m);
+
+  if (gcd !== 1) {
+    throw new Error("Modular inverse does not exist.");
+  }
+
+  return ((x % m) + m) % m;
+}
+
+// Helper function to perform the extended Euclidean algorithm
+function extendedEuclidean(a, b) {
+  if (b === 0) {
+    return [1, 0, a];
+  }
+
+  const [x, y, gcd] = extendedEuclidean(b, a % b);
+  const newX = y;
+  const newY = x - Math.floor(a / b) * y;
+
+  return [newX, newY, gcd];
+}
+
 const sendMessage = asyncHandler(async (req, res) => {
   const { content, chatId } = req.body;
   if (!content || !chatId) {
@@ -29,10 +100,10 @@ const sendMessage = asyncHandler(async (req, res) => {
     return res.statusCode(400);
   }
   const encryptContent = encryptText(content);
-  console.log("This is encrypted message ", encryptContent);
+  const cipher = encryptAffine(encryptContent);
   var newMessage = {
     sender: req.user._id,
-    content: encryptContent,
+    content: cipher,
     chat: chatId,
   };
   try {
@@ -48,8 +119,10 @@ const sendMessage = asyncHandler(async (req, res) => {
     await Chat.findByIdAndUpdate(req.body.chatId, {
       latestMessage: message,
     });
-    console.log("This is content of message ", decryptText(message.content));
-    message["content"] = decryptText(message.content);
+    const decryptedMessage = decryptAffine(message.content);
+    const plainText = decryptText(decryptedMessage);
+
+    message["content"] = plainText;
     res.json(message);
   } catch (e) {
     res.status(400);
